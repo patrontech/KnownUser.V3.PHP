@@ -45,10 +45,12 @@ class UserInQueueService implements IUserInQueueService
     }
 
     private $userInQueueStateRepository;
+    private $enqueueTokenProvider;
 
-    function __construct(IUserInQueueStateRepository $userInQueueStateRepository)
+    function __construct(IUserInQueueStateRepository $userInQueueStateRepository, IEnqueueTokenProvider $enqueueTokenProvider = null)
     {
         $this->userInQueueStateRepository = $userInQueueStateRepository;
+        $this->enqueueTokenProvider = $enqueueTokenProvider;
     }
 
     public function validateQueueRequest(
@@ -322,6 +324,7 @@ class UserInQueueService implements IUserInQueueService
 
     private function getEnqueueTokenProvider()
     {
+        return $this->enqueueTokenProvider;
     }
 }
 
