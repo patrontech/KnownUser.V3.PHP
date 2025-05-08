@@ -1,5 +1,5 @@
 {
-    "name": "queueit/knownuserv3",
+    "name": "patrontech/knownuserv3",
     "description": "The Queue-it Security Framework is used to ensure that end users cannot bypass the queue by adding a server-side integration to your server.",
     "require": {
         "php": ">=5.3.3"
