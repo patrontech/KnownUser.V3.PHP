@@ -84,7 +84,7 @@ class UserInQueueService implements IUserInQueueService
 
             return $result;
         }
-        
+
         $queueParams = QueueUrlParams::extractQueueParams($queueitToken);
 
         $requestValidationResult = null;
@@ -102,7 +102,7 @@ class UserInQueueService implements IUserInQueueService
         } else {
             $requestValidationResult = $this->getQueueResult($targetUrl, $config, $customerId);
         }
-        
+
         if ($state->isFound && !$isTokenValid)
         {
             $this->userInQueueStateRepository->cancelQueueCookie(
@@ -111,7 +111,7 @@ class UserInQueueService implements IUserInQueueService
                 $config->isCookieHttpOnly,
                 $config->isCookieSecure);
         }
-        
+
         return $requestValidationResult;
     }
 
@@ -176,7 +176,8 @@ class UserInQueueService implements IUserInQueueService
         QueueEventConfig $config,
         $customerId
     ) {
-        $query = $this->getQueryString($customerId, $config->eventId, $config->version, $config->culture, $config->layoutName, $config->actionName) .
+        $enqueueToken = $this->getEnqueueTokenProvider() && $this->getEnqueueTokenProvider()->getEnqueueToken($config->eventId);
+        $query = $this->getQueryString($customerId, $config->eventId, $config->version, $config->culture, $config->layoutName, $config->actionName, $enqueueToken) .
             (!Utils::isNullOrEmptyString($targetUrl) ? "&t=" . rawurlencode($targetUrl) : "");
 
         $redirectUrl = $this->generateRedirectUrl($config->queueDomain, "", $query);
@@ -199,7 +200,8 @@ class UserInQueueService implements IUserInQueueService
         $configVersion,
         $culture,
         $layoutName,
-        $actionName
+        $actionName,
+        $enqueueToken = null
     ) {
         $queryStringList = array();
         array_push($queryStringList, "c=" . rawurlencode($customerId));
@@ -214,6 +216,10 @@ class UserInQueueService implements IUserInQueueService
 
         if (!Utils::isNullOrEmptyString($layoutName)) {
             array_push($queryStringList, "l=" . rawurlencode($layoutName));
+        }
+
+        if (!Utils::isNullOrEmptyString($enqueueToken)) {
+            array_push($queryStringList, "enqueuetoken=" . rawurlencode($enqueueToken));
         }
 
         return implode("&", $queryStringList);
@@ -313,9 +319,13 @@ class UserInQueueService implements IUserInQueueService
 
         return new TokenValidationResult(true, null);
     }
+
+    private function getEnqueueTokenProvider()
+    {
+    }
 }
 
-class TokenValidationResult 
+class TokenValidationResult
 {
     public $isValid;
     public $errorCode;
