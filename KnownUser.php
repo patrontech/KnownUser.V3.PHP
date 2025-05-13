@@ -39,7 +39,7 @@ class KnownUser
         return KnownUser::$httpRequestProvider;
     }
 
-    public static function setEnqueueTokenProvider(IHttpRequestProvider $customEnqueueTokenProvider){
+    public static function setEnqueueTokenProvider(IEnqueueTokenProvider $customEnqueueTokenProvider){
         KnownUser::$enqueueTokenProvider = $customEnqueueTokenProvider;
     }
 
