@@ -178,7 +178,7 @@ class UserInQueueService implements IUserInQueueService
         QueueEventConfig $config,
         $customerId
     ) {
-        $enqueueToken = $this->getEnqueueTokenProvider() && $this->getEnqueueTokenProvider()->getEnqueueToken($config->eventId);
+        $enqueueToken = $this->getEnqueueTokenProvider()?->getEnqueueToken($config->eventId);
         $query = $this->getQueryString($customerId, $config->eventId, $config->version, $config->culture, $config->layoutName, $config->actionName, $enqueueToken) .
             (!Utils::isNullOrEmptyString($targetUrl) ? "&t=" . rawurlencode($targetUrl) : "");
 
