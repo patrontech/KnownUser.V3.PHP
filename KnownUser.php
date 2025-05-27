@@ -10,14 +10,17 @@ require_once('QueueITHelpers.php');
 
 class KnownUser
 {
-    const QueueITAjaxHeaderKey = "x-queueit-ajaxpageurl";    
+    const QueueITAjaxHeaderKey = "x-queueit-ajaxpageurl";
 
     //used for unittest
     private static $userInQueueService = null;
     private static function getUserInQueueService()
     {
         if (KnownUser::$userInQueueService == null) {
-            return new UserInQueueService(new UserInQueueStateCookieRepository(KnownUser::getHttpRequestProvider()->getCookieManager()));
+            return new UserInQueueService(
+                new UserInQueueStateCookieRepository(KnownUser::getHttpRequestProvider()->getCookieManager()),
+                KnownUser::getEnqueueTokenProvider()
+            );
         }
         return KnownUser::$userInQueueService;
     }
@@ -34,6 +37,20 @@ class KnownUser
             return new HttpRequestProvider();
         }
         return KnownUser::$httpRequestProvider;
+    }
+
+    public static function setEnqueueTokenProvider(IEnqueueTokenProvider $customEnqueueTokenProvider){
+        KnownUser::$enqueueTokenProvider = $customEnqueueTokenProvider;
+    }
+
+    //used for enqueueToken
+    private static $enqueueTokenProvider = null;
+    private static function getEnqueueTokenProvider()
+    {
+        if (KnownUser::$enqueueTokenProvider == null) {
+            return new HttpRequestProvider();
+        }
+        return KnownUser::$enqueueTokenProvider;
     }
 
     private static $debugInfoArray = null;
@@ -424,13 +441,13 @@ class CookieManager implements ICookieManager
     public function setCookie($name, $value, $expire, $domain, $isHttpOnly, $isSecure)
     {
         if(is_null($value)){ $value = ""; }
-        
+
         if(is_null($expire)){ $expire = 0; }
-        
+
         if(is_null($domain)){ $domain = ""; }
 
         if(is_null($isHttpOnly)){ $isHttpOnly = false; }
-    
+
         if(is_null($isSecure)){ $isSecure = false; }
 
         setcookie($name, $value, $expire, "/", $domain, $isSecure, $isHttpOnly);
@@ -507,7 +524,7 @@ class HttpRequestProvider implements IHttpRequestProvider
     }
 
     function getRequestBodyAsString()
-    {        
+    {
         return '';
     }
 }

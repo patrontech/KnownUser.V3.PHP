@@ -1,7 +1,7 @@
 # KnownUser.V3.PHP
 Before getting started please read the [documentation](https://github.com/queueit/Documentation/tree/main/serverside-connectors) to get acquainted with server-side connectors.
 
-This connector supports PHP >= 5.3.3.
+This connector supports PHP >= 8.2.0.
 
 You can find the latest released version [here](https://github.com/queueit/KnownUser.V3.PHP/releases/latest) and packagist package [here](https://packagist.org/packages/queueit/knownuserv3).
 
