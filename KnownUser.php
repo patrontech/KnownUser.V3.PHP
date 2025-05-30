@@ -50,7 +50,7 @@ class KnownUser
     private static function getEnqueueTokenProvider()
     {
         if (KnownUser::$enqueueTokenProvider == null) {
-            return new HttpRequestProvider();
+            return null;
         }
         return KnownUser::$enqueueTokenProvider;
     }
